@@ -3,11 +3,12 @@ package org.hyzhak.starling.display
 	import flash.display.BitmapData;
 	import flash.display3D.textures.Texture;
 	
+	import feathers.display.TiledImage;
+	
 	import starling.core.RenderSupport;
-	import starling.display.Image;
 	import starling.textures.Texture;
 	
-	public class DynamicImage extends Image
+	public class DynamicImage extends TiledImage
 	{
 		private var _textureWidth : int = 32;
 		private var _textureHeight : int = 32;
@@ -83,7 +84,7 @@ package org.hyzhak.starling.display
 				if(_invalideTextureSize)
 				{
 					_invalideTextureSize = false;
-					validateTextureSize()
+					validateTextureSize();
 				}
 				else if(_invalideTexture)
 				{

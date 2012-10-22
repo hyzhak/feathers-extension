@@ -12,7 +12,7 @@ package org.hyzhak.starling.display
 		
 		override protected function validateBitmapData(bitmapData : BitmapData) : void
 		{
-			bitmapData.perlinNoise(128, 128, 8, int.MAX_VALUE * Math.random(), false, false, BitmapDataChannel.RED | BitmapDataChannel.BLUE | BitmapDataChannel.GREEN, true, [10 * Math.random(), 10 * Math.random()]);
+			bitmapData.perlinNoise(97, 73, 7, int.MAX_VALUE * Math.random(), true, false, BitmapDataChannel.RED | BitmapDataChannel.BLUE | BitmapDataChannel.GREEN, true, [10 * Math.random(), 10 * Math.random()]);
 		}
 	}
 }
