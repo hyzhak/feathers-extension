@@ -71,7 +71,7 @@ package org.hyzhak.starling.display
 			
 			_buttonSkin.rotation = 2 * Math.PI * value / delta;
 			
-			dispatchEvent(new Event(Event.CHANGE));
+			dispatchEventWith(Event.CHANGE);
 		}
 		
 		public function get delta():Number
