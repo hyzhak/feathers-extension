@@ -1,4 +1,4 @@
-package org.hyzhak.starling.display
+package org.hyzhak.starling.display.knob
 {
 	public interface IKnobMode
 	{

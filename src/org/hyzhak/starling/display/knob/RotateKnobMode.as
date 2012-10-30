@@ -1,7 +1,5 @@
 package org.hyzhak.starling.display.knob
 {
-	import org.hyzhak.starling.display.IKnobMode;
-	import org.hyzhak.starling.display.KnobControl;
 	
 	public class RotateKnobMode implements IKnobMode
 	{
@@ -39,13 +37,30 @@ package org.hyzhak.starling.display.knob
 			
 			if(!knob.infinite)
 			{
-				if(newValue > knob.maximum)
+				if(!isNaN(knob.maximum) && newValue > knob.maximum)
 				{
 					newValue = knob.maximum;
 				}
-				else if(newValue < knob.minimum)
+				else if(!isNaN(knob.minimum) && newValue < knob.minimum)
 				{
 					newValue = knob.minimum;
+				}
+			}
+			else
+			{
+				if(!isNaN(knob.maximum))
+				{
+					while(newValue > knob.maximum)
+					{
+						newValue -= knob.maximum - knob.minimum;
+					}
+				}
+				else if(!isNaN(knob.minimum))
+				{
+					while(newValue < knob.minimum)
+					{
+						newValue += knob.maximum - knob.minimum;
+					}
 				}
 			}
 			

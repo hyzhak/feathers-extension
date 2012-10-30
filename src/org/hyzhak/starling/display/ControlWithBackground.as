@@ -40,6 +40,18 @@ package org.hyzhak.starling.display
 			this.addEventListener(starling.events.Event.REMOVED_FROM_STAGE, removedFromStageHandler);			
 		}
 		
+		override public function set width(value:Number):void
+		{
+			super.width = value;
+			backgroundSkin.width = value;
+		}
+		
+		override public function set height(value : Number) : void
+		{
+			super.height = value;
+			backgroundSkin.height = value;
+		}
+		
 		/**
 		 * @private
 		 */

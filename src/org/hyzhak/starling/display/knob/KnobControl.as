@@ -1,8 +1,8 @@
-package org.hyzhak.starling.display
+package org.hyzhak.starling.display.knob
 {
 	import flash.geom.Point;
 	
-	import org.hyzhak.starling.display.knob.RotateKnobMode;
+	import org.hyzhak.starling.display.ControlWithBackground;
 	
 	import starling.display.DisplayObject;
 	import starling.events.Event;
@@ -42,6 +42,12 @@ package org.hyzhak.starling.display
 		private var _centerX:Number;
 		private var _centerY:Number;
 		
+		private var _radius:Number;
+		
+		private var _zeroPointAngle : Number;
+		
+		private var _maximumPointAngle : Number;
+		
 		public function KnobControl()
 		{
 			super();
@@ -55,6 +61,47 @@ package org.hyzhak.starling.display
 		//
 		//--------------------------------------------------------------------------
 
+		public function get maximumPointAngle():Number
+		{
+			return _maximumPointAngle;
+		}
+
+		public function set maximumPointAngle(value:Number):void
+		{
+			if(_maximumPointAngle == value)
+			{
+				return;
+			}
+			
+			_maximumPointAngle = value;
+			refreshDelta();
+			invalidate(INVALIDATION_FLAG_DATA);
+		}
+
+		public function get zeroPointAngle():Number
+		{
+			return _zeroPointAngle;
+		}
+
+		public function set zeroPointAngle(value:Number):void
+		{
+			if(_zeroPointAngle == value)
+			{
+				return;
+			}
+			_zeroPointAngle = value;
+			refreshDelta();
+			invalidate(INVALIDATION_FLAG_DATA);
+		}
+		
+		private function refreshDelta():void
+		{
+			if(!(isNaN(zeroPointAngle) || isNaN(maximumPointAngle)))
+			{
+				delta = 2 * Math.PI / (maximumPointAngle - zeroPointAngle);
+			}
+		}
+		
 		public function get value():Number
 		{
 			return _value;
@@ -69,9 +116,32 @@ package org.hyzhak.starling.display
 			
 			_value = value;
 			
-			_buttonSkin.rotation = 2 * Math.PI * value / delta;
-			
 			dispatchEventWith(Event.CHANGE);
+			invalidate(INVALIDATION_FLAG_DATA);
+		}
+		
+		/**
+		 * @private
+		 */
+		override protected function draw():void
+		{
+			super.draw();
+			
+			var dataInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_DATA);
+			
+			if(dataInvalid)
+			{
+				var rotation : Number;
+				
+				rotation = 2 * Math.PI * value / delta;
+				
+				if(!isNaN(zeroPointAngle))
+				{
+					rotation += zeroPointAngle;
+				}
+				
+				_buttonSkin.rotation = rotation;				
+			}
 		}
 		
 		public function get delta():Number
@@ -124,6 +194,37 @@ package org.hyzhak.starling.display
 			return y + 0.5 * height;
 		}
 		
+		public function get radius() : Number
+		{
+			return _radius;
+		}
+		
+		public function set radius(value : Number) : void
+		{
+			if(_radius == value)
+			{
+				return;
+			}
+			
+			_radius = value;
+			width = _radius;
+			height = _radius;			
+		}
+		
+		override public function set width(value:Number):void
+		{
+			super.width = value;
+			knobSkin.width = value;
+			buttonHotspotSkin.width = value;
+		}
+		
+		override public function set height(value : Number) : void
+		{
+			super.height = value;
+			knobSkin.height = value;
+			buttonHotspotSkin.height = value;
+		}
+		
 		//--------------------------------------------------------------------------
 		//
 		//  Skins
@@ -132,12 +233,12 @@ package org.hyzhak.starling.display
 		
 		private var _buttonSkin : DisplayObject;
 		
-		public function get buttonSkin():DisplayObject
+		public function get knobSkin():DisplayObject
 		{
 			return _buttonSkin;
 		}
 		
-		public function set buttonSkin(value:DisplayObject):void
+		public function set knobSkin(value:DisplayObject):void
 		{
 			if(_buttonSkin == value)
 			{
@@ -190,6 +291,12 @@ package org.hyzhak.starling.display
 			if(_buttonHotspotSkin)
 			{
 				//_buttonSkin.touchable = false;
+				_centerX = _buttonHotspotSkin.width / 2;
+				_centerY = _buttonHotspotSkin.height / 2;
+				_buttonHotspotSkin.x = _centerX;
+				_buttonHotspotSkin.y = _centerY;
+				_buttonHotspotSkin.pivotX = _centerX / _buttonHotspotSkin.scaleX;
+				_buttonHotspotSkin.pivotY = _centerY / _buttonHotspotSkin.scaleY;
 				this.addChild(_buttonHotspotSkin);
 			}
 			
