@@ -120,30 +120,6 @@ package org.hyzhak.starling.display.knob
 			invalidate(INVALIDATION_FLAG_DATA);
 		}
 		
-		/**
-		 * @private
-		 */
-		override protected function draw():void
-		{
-			super.draw();
-			
-			var dataInvalid:Boolean = this.isInvalid(INVALIDATION_FLAG_DATA);
-			
-			if(dataInvalid)
-			{
-				var rotation : Number;
-				
-				rotation = 2 * Math.PI * value / delta;
-				
-				if(!isNaN(zeroPointAngle))
-				{
-					rotation += zeroPointAngle;
-				}
-				
-				_buttonSkin.rotation = rotation;				
-			}
-		}
-		
 		public function get delta():Number
 		{
 			return _delta;
@@ -214,15 +190,11 @@ package org.hyzhak.starling.display.knob
 		override public function set width(value:Number):void
 		{
 			super.width = value;
-			knobSkin.width = value;
-			buttonHotspotSkin.width = value;
 		}
 		
 		override public function set height(value : Number) : void
 		{
 			super.height = value;
-			knobSkin.height = value;
-			buttonHotspotSkin.height = value;
 		}
 		
 		//--------------------------------------------------------------------------
@@ -288,19 +260,9 @@ package org.hyzhak.starling.display.knob
 			
 			_buttonHotspotSkin = value;
 			
-			if(_buttonHotspotSkin)
-			{
-				//_buttonSkin.touchable = false;
-				_centerX = _buttonHotspotSkin.width / 2;
-				_centerY = _buttonHotspotSkin.height / 2;
-				_buttonHotspotSkin.x = _centerX;
-				_buttonHotspotSkin.y = _centerY;
-				_buttonHotspotSkin.pivotX = _centerX / _buttonHotspotSkin.scaleX;
-				_buttonHotspotSkin.pivotY = _centerY / _buttonHotspotSkin.scaleY;
-				this.addChild(_buttonHotspotSkin);
-			}
-			
-			this.invalidate(INVALIDATION_FLAG_SKIN);
+			addChild(_buttonHotspotSkin);
+						
+			invalidate(INVALIDATION_FLAG_SKIN);
 		}
 
 		//--------------------------------------------------------------------------
@@ -313,7 +275,65 @@ package org.hyzhak.starling.display.knob
 		{
 			super.initialize();
 			addEventListener(TouchEvent.TOUCH, onTouch);
-		}			
+		}
+		
+		/**
+		 * @private
+		 */
+		override protected function draw():void
+		{
+			super.draw();
+			
+			var dataInvalid:Boolean = isInvalid(INVALIDATION_FLAG_DATA);
+			var skinInvalid:Boolean = isInvalid(INVALIDATION_FLAG_SKIN);
+			var sizeInvalid:Boolean = isInvalid(INVALIDATION_FLAG_SIZE);
+			
+			if(dataInvalid)
+			{				
+				knobSkin.rotation = calcRotation();		
+			}
+			
+			if(skinInvalid && _buttonHotspotSkin)
+			{
+				//_buttonSkin.touchable = false;
+				_centerX = buttonHotspotSkin.width / 2;
+				_centerY = buttonHotspotSkin.height / 2;
+				buttonHotspotSkin.x = _centerX;
+				buttonHotspotSkin.y = _centerY;
+				buttonHotspotSkin.pivotX = _centerX / buttonHotspotSkin.scaleX;
+				buttonHotspotSkin.pivotY = _centerY / buttonHotspotSkin.scaleY;
+				
+				knobSkin.width = width;
+				knobSkin.height = height;
+				knobSkin.rotation = calcRotation();
+					
+				buttonHotspotSkin.width = width;
+				buttonHotspotSkin.height = height;
+				
+			}
+			
+			if(sizeInvalid)
+			{
+				knobSkin.width = width;
+				knobSkin.height = height;
+				buttonHotspotSkin.width = width;
+				buttonHotspotSkin.height = height;				
+			}
+		}
+		
+		private function calcRotation():Number
+		{
+			var rotation : Number;
+			
+			rotation = 2 * Math.PI * value / delta;
+			
+			if(!isNaN(zeroPointAngle))
+			{
+				rotation += zeroPointAngle;
+			}
+			
+			return rotation;
+		}
 		
 		private function onTouch(event : TouchEvent):void
 		{
